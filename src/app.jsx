@@ -14,6 +14,7 @@ import AddEditDuePage from './ui/pages/AddEditDuePage'
 import CategoriesPage from './ui/pages/CategoriesPage'
 import VendorsPage from './ui/pages/VendorsPage'
 import SettingsPage from './ui/pages/SettingsPage'
+import ReportsPage from './ui/pages/ReportsPage'
 
 // Import styling tokens
 import './ui/styles/tokens.css'
@@ -57,6 +58,9 @@ export const App = () => {
             <NavLink to="/dues" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
               Due Payments
             </NavLink>
+            <NavLink to="/reports" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
+              Reports
+            </NavLink>
             <NavLink to="/vendors" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
               Vendors
             </NavLink>
@@ -79,6 +83,7 @@ export const App = () => {
             <Route path="/dues" element={<DuesPage />} />
             <Route path="/dues/new" element={<AddEditDuePage />} />
             <Route path="/dues/:id/edit" element={<AddEditDuePage />} />
+            <Route path="/reports" element={<ReportsPage />} />
             <Route path="/vendors" element={<VendorsPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/settings" element={<SettingsPage />} />
@@ -98,6 +103,10 @@ export const App = () => {
           <NavLink to="/dues" className={({ isActive }) => `bottom-nav-item ${isActive ? 'active' : ''}`}>
             <span style={{ fontSize: '1.25rem' }}>📅</span>
             <span>Dues</span>
+          </NavLink>
+          <NavLink to="/reports" className={({ isActive }) => `bottom-nav-item ${isActive ? 'active' : ''}`}>
+            <span style={{ fontSize: '1.25rem' }}>📊</span>
+            <span>Reports</span>
           </NavLink>
           <NavLink to="/settings" className={({ isActive }) => `bottom-nav-item ${isActive ? 'active' : ''}`}>
             <span style={{ fontSize: '1.25rem' }}>⚙️</span>
