@@ -16,6 +16,10 @@ import VendorsPage from './ui/pages/VendorsPage'
 import SettingsPage from './ui/pages/SettingsPage'
 import ReportsPage from './ui/pages/ReportsPage'
 
+// Import Backup Service and Toast Component
+import { BackupService } from './data/storage'
+import { ToastContainer, showToast } from './ui/components/Toast'
+
 // Import styling tokens
 import './ui/styles/tokens.css'
 import './ui/styles/app.css'
@@ -28,10 +32,52 @@ injectDependencies({
 
 export const App = () => {
   useEffect(() => {
+    const runWeeklyBackupCheck = async () => {
+      try {
+        const lastBackupStr = await BackupService.getLastBackupAt()
+        
+        let shouldBackup = false
+        if (!lastBackupStr) {
+          shouldBackup = true
+        } else {
+          const lastBackup = new Date(lastBackupStr)
+          const sevenDaysInMs = 7 * 24 * 60 * 60 * 1000
+          if (new Date() - lastBackup >= sevenDaysInMs) {
+            shouldBackup = true
+          }
+        }
+
+        if (shouldBackup) {
+          const d = new Date()
+          const YYYY = d.getFullYear()
+          const MM = String(d.getMonth() + 1).padStart(2, '0')
+          const DD = String(d.getDate()).padStart(2, '0')
+          const HH = String(d.getHours()).padStart(2, '0')
+          const Min = String(d.getMinutes()).padStart(2, '0')
+          const timestamp = `${YYYY}-${MM}-${DD}-${HH}-${Min}`
+
+          const blob = await BackupService.exportJSON()
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = `HisabTracker-Backup-${timestamp}.json`
+          a.click()
+          URL.revokeObjectURL(url)
+
+          await BackupService.updateLastBackupAt(d.toISOString())
+
+          showToast(`Weekly backup downloaded — HisabTracker-Backup-${timestamp}.json`, 6000)
+        }
+      } catch (err) {
+        console.error('[Backup Check] Failed to run weekly backup:', err)
+      }
+    }
+
     const bootstrap = async () => {
       try {
         await NotificationSettingsService.initSettings()
         await runDailyCheck()
+        await runWeeklyBackupCheck()
       } catch (error) {
         console.error('[App] Error during startup bootstrap:', error)
       }
@@ -113,6 +159,9 @@ export const App = () => {
             <span>Settings</span>
           </NavLink>
         </div>
+
+        {/* Toast Notification Container */}
+        <ToastContainer />
 
       </div>
     </Router>

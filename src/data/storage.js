@@ -306,6 +306,29 @@ export const StorageService = {
 }
 
 export const BackupService = {
+  async getLastBackupAt() {
+    try {
+      const db = await dbPromise
+      const settings = await db.get('notificationSettings', 'singleton')
+      return settings ? settings.lastBackupAt : null
+    } catch (error) {
+      console.error('[BackupService] Error reading lastBackupAt:', error)
+      return null
+    }
+  },
+
+  async updateLastBackupAt(dateStr) {
+    try {
+      const db = await dbPromise
+      const settings = await db.get('notificationSettings', 'singleton') || { id: 'singleton', enabled: true, defaultLeadDays: 5, permissionState: 'default' }
+      settings.lastBackupAt = dateStr
+      await db.put('notificationSettings', settings)
+    } catch (error) {
+      console.error('[BackupService] Error writing lastBackupAt:', error)
+      throw error
+    }
+  },
+
   async exportJSON() {
     try {
       const db = await dbPromise

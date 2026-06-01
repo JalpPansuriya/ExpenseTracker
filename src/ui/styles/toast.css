@@ -1,0 +1,59 @@
+/* Custom styles for Toast Notification System */
+
+.toast-container-root {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  max-width: 480px;
+  transition: bottom var(--transition-normal);
+}
+
+/* Offset for mobile bottom touch navigation */
+@media (max-width: 767px) {
+  .toast-container-root {
+    bottom: 84px;
+  }
+}
+
+.toast-message-card {
+  pointer-events: auto;
+  background-color: rgba(0, 95, 115, 0.96); /* Glassmorphic deep teal */
+  color: #ffffff;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-family-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  
+  /* Entrance animation */
+  animation: toastSlideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  transition: opacity var(--transition-normal);
+}
+
+.toast-message-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+@keyframes toastSlideUp {
+  0% {
+    transform: translateY(20px) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}

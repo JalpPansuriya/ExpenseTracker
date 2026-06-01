@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { BackupService } from '../../data/storage'
 import { NotificationSettingsService } from '../../notifications/settings'
 import { NotificationService } from '../../notifications/notificationService'
+import { showToast } from '../components/Toast'
 
 export const SettingsPage = () => {
   const [settings, setSettings] = useState({ enabled: true, defaultLeadDays: 5, permissionState: 'default' })
@@ -70,14 +71,28 @@ export const SettingsPage = () => {
   // Backup actions
   const handleExportBackup = async () => {
     try {
+      const d = new Date()
+      const YYYY = d.getFullYear()
+      const MM = String(d.getMonth() + 1).padStart(2, '0')
+      const DD = String(d.getDate()).padStart(2, '0')
+      const HH = String(d.getHours()).padStart(2, '0')
+      const Min = String(d.getMinutes()).padStart(2, '0')
+      const timestamp = `${YYYY}-${MM}-${DD}-${HH}-${Min}`
+
       const blob = await BackupService.exportJSON()
       const url = URL.createObjectURL(blob)
       const link = document.createElement("a")
       link.setAttribute("href", url)
-      link.setAttribute("download", `hisab_tracker_backup_${new Date().toISOString().split('T')[0]}.json`)
+      link.setAttribute("download", `HisabTracker-Backup-${timestamp}.json`)
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+
+      // Update last backup timestamp to synchronize weekly check
+      await BackupService.updateLastBackupAt(d.toISOString())
+
+      showToast(`Weekly backup downloaded — HisabTracker-Backup-${timestamp}.json`, 6000)
       setSuccess('Backup exported successfully!')
     } catch (err) {
       setError('Backup export failed: ' + err.message)
@@ -221,7 +236,7 @@ export const SettingsPage = () => {
                 </p>
               </div>
               <button className="btn btn-secondary btn-sm" onClick={handleExportBackup} style={{ width: '100%' }}>
-                Export backup JSON
+                Download Backup Now
               </button>
             </div>
           </div>
