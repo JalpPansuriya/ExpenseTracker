@@ -67,7 +67,7 @@ export const MarkAsPaidSheet = ({ isOpen, duePayment, categories = [], onConfirm
             <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Due Record</div>
             <div style={{ fontWeight: '700', fontSize: '1.05rem', margin: '0.25rem 0' }}>{duePayment.title}</div>
             <div style={{ fontSize: '0.85rem', color: '#555' }}>
-              Vendor: <strong>{duePayment.vendor}</strong> | Category: <strong>{selectedCategory ? `${selectedCategory.icon} ${selectedCategory.name}` : 'Unknown'}</strong>
+              Vendor: <strong>{duePayment.vendorName || duePayment.vendor}</strong> | Category: <strong>{selectedCategory ? `${selectedCategory.icon} ${selectedCategory.name}` : 'Unknown'}</strong>
             </div>
           </div>
 

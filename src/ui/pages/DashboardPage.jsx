@@ -292,7 +292,21 @@ export const DashboardPage = () => {
                         }}>
                           {isIncome ? 'IN' : 'OUT'}
                         </span>
-                        {exp.vendor}
+                        {exp.vendorId ? (
+                          <Link 
+                            to={`/vendors/${exp.vendorId}`}
+                            style={{ 
+                              color: 'var(--primary)', 
+                              fontWeight: '700', 
+                              textDecoration: 'none',
+                              borderBottom: '1px dashed var(--primary-light)'
+                            }}
+                          >
+                            {exp.vendorName || exp.vendor}
+                          </Link>
+                        ) : (
+                          <span>{exp.vendorName || exp.vendor}</span>
+                        )}
                       </div>
                       <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', marginTop: '0.2rem' }}>
                         <CategoryPill category={cat} />

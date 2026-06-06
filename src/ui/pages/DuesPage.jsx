@@ -194,6 +194,7 @@ export const DuesPage = () => {
   // Totals calculations
   const totalPayable = finalDues.filter(d => d.type !== 'receivable').reduce((sum, item) => sum + item.amount, 0)
   const totalReceivable = finalDues.filter(d => d.type === 'receivable').reduce((sum, item) => sum + item.amount, 0)
+  const totalAmount = finalDues.reduce((sum, item) => sum + item.amount, 0)
 
   return (
     <div className="app-container">

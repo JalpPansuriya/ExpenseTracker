@@ -410,7 +410,21 @@ export const ExpensesPage = () => {
                           }}>
                             {isIncome ? 'IN' : 'OUT'}
                           </span>
-                          <span style={{ fontWeight: '700' }}>{exp.vendor}</span>
+                          {exp.vendorId ? (
+                            <Link 
+                              to={`/vendors/${exp.vendorId}`} 
+                              style={{ 
+                                color: 'var(--primary)', 
+                                fontWeight: '700', 
+                                textDecoration: 'none',
+                                borderBottom: '1px dashed var(--primary-light)'
+                              }}
+                            >
+                              {exp.vendorName || exp.vendor}
+                            </Link>
+                          ) : (
+                            <span style={{ fontWeight: '700' }}>{exp.vendorName || exp.vendor}</span>
+                          )}
                         </div>
                         {exp.notes && <div style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.2rem', paddingLeft: '2.5rem' }}>{exp.notes}</div>}
                       </td>

@@ -15,6 +15,7 @@ import CategoriesPage from './ui/pages/CategoriesPage'
 import VendorsPage from './ui/pages/VendorsPage'
 import SettingsPage from './ui/pages/SettingsPage'
 import ReportsPage from './ui/pages/ReportsPage'
+import VendorDetailPage from './ui/pages/VendorDetailPage'
 
 // Import Backup Service and Toast Component
 import { BackupService } from './data/storage'
@@ -131,6 +132,7 @@ export const App = () => {
             <Route path="/dues/:id/edit" element={<AddEditDuePage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/vendors" element={<VendorsPage />} />
+            <Route path="/vendors/:id" element={<VendorDetailPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Routes>

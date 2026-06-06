@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import AmountDisplay from './AmountDisplay'
 import CategoryPill from './CategoryPill'
 import PriorityBadge from './PriorityBadge'
@@ -12,6 +13,7 @@ export const DuePaymentCard = ({
   onDelete 
 }) => {
   const category = categories.find(c => c.id === duePayment.categoryId)
+  const displayVendor = duePayment.vendorName || duePayment.vendor
   
   return (
     <div className={`card`} style={{ borderLeft: `5px solid ${
@@ -36,7 +38,22 @@ export const DuePaymentCard = ({
             {duePayment.title}
           </h4>
           <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-            Vendor: <strong>{duePayment.vendor}</strong>
+            Vendor:{' '}
+            {duePayment.vendorId ? (
+              <Link 
+                to={`/vendors/${duePayment.vendorId}`}
+                style={{ 
+                  color: 'var(--primary)', 
+                  fontWeight: '700', 
+                  textDecoration: 'none',
+                  borderBottom: '1px dashed var(--primary-light)'
+                }}
+              >
+                {displayVendor}
+              </Link>
+            ) : (
+              <strong>{displayVendor}</strong>
+            )}
           </span>
         </div>
         <div style={{ textAlign: 'right' }}>
