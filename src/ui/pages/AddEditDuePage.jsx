@@ -14,6 +14,7 @@ export const AddEditDuePage = () => {
   const [type, setType] = useState('payable')
   const [vendorId, setVendorId] = useState('')
   const [amount, setAmount] = useState('')
+  const [date, setDate] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [categoryId, setCategoryId] = useState('')
   const [priority, setPriority] = useState('medium')
@@ -32,6 +33,11 @@ export const AddEditDuePage = () => {
       if (cats.length > 0) {
         setCategoryId(cats[0].id)
       }
+
+      // Default record date to today
+      const today = new Date()
+      const todayStr = today.toLocaleDateString('en-CA')
+      setDate(todayStr)
 
       // Default due date to 90 days from now
       const defaultDate = new Date()
@@ -55,6 +61,7 @@ export const AddEditDuePage = () => {
           setType(due.type || 'payable')
           setVendorId(due.vendorId || '')
           setAmount((due.amount / 100).toString()) // convert paise to float
+          setDate(due.date || (due.createdAt ? due.createdAt.split('T')[0] : todayStr))
           setDueDate(due.dueDate)
           setCategoryId(due.categoryId)
           setPriority(due.priority)
@@ -68,6 +75,18 @@ export const AddEditDuePage = () => {
     loadData()
   }, [id, isEdit])
 
+  const handleDateChange = (newDateVal) => {
+    setDate(newDateVal)
+    if (!isEdit && newDateVal) {
+      const parts = newDateVal.split('-')
+      if (parts.length === 3) {
+        const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
+        d.setDate(d.getDate() + 90)
+        setDueDate(d.toLocaleDateString('en-CA'))
+      }
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setErrors({})
@@ -78,6 +97,7 @@ export const AddEditDuePage = () => {
       type,
       vendorId,
       amount: amount ? Number(amount) : '', // float format
+      date,
       dueDate,
       categoryId,
       priority,
@@ -192,6 +212,19 @@ export const AddEditDuePage = () => {
               required
             />
             {errors.amount && <div className="form-error">{errors.amount}</div>}
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Date</label>
+            <input 
+              type="date" 
+              className="form-control"
+              value={date}
+              onChange={e => handleDateChange(e.target.value)}
+              disabled={formError.includes('paid')}
+              required
+            />
+            {errors.date && <div className="form-error">{errors.date}</div>}
           </div>
 
           <div className="form-group">
