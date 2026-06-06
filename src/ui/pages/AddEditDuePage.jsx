@@ -53,10 +53,6 @@ export const AddEditDuePage = () => {
       if (isEdit) {
         const due = await DuePaymentService.getDuePayment(id)
         if (due) {
-          if (due.status === 'paid') {
-            setFormError('Cannot edit a paid due payment')
-            return
-          }
           setTitle(due.title)
           setType(due.type || 'payable')
           setVendorId(due.vendorId || '')

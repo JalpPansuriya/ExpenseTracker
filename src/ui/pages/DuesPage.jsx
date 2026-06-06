@@ -32,6 +32,7 @@ export const DuesPage = () => {
   // Interaction Sheets
   const [paidSheetDue, setPaidSheetDue] = useState(null)
   const [deleteId, setDeleteId] = useState(null)
+  const [revertId, setRevertId] = useState(null)
 
   useEffect(() => {
     loadData()
@@ -47,6 +48,18 @@ export const DuesPage = () => {
       await DuePaymentService.deleteDuePayment(deleteId)
       setDeleteId(null)
       loadData()
+    }
+  }
+
+  const handleRevertConfirm = async () => {
+    if (revertId) {
+      try {
+        await DuePaymentService.revertDuePayment(revertId)
+        setRevertId(null)
+        loadData()
+      } catch (err) {
+        alert('Failed to revert payment: ' + err.message)
+      }
     }
   }
 
@@ -142,6 +155,7 @@ export const DuesPage = () => {
                   onMarkPaid={setPaidSheetDue}
                   onEdit={(id) => navigate(`/dues/${id}/edit`)}
                   onDelete={setDeleteId}
+                  onRevert={setRevertId}
                 />
               ))}
             </div>
@@ -162,6 +176,7 @@ export const DuesPage = () => {
                   onMarkPaid={setPaidSheetDue}
                   onEdit={(id) => navigate(`/dues/${id}/edit`)}
                   onDelete={setDeleteId}
+                  onRevert={setRevertId}
                 />
               ))}
             </div>
@@ -182,6 +197,7 @@ export const DuesPage = () => {
                   onMarkPaid={setPaidSheetDue}
                   onEdit={(id) => navigate(`/dues/${id}/edit`)}
                   onDelete={setDeleteId}
+                  onRevert={setRevertId}
                 />
               ))}
             </div>
@@ -415,6 +431,7 @@ export const DuesPage = () => {
               onMarkPaid={setPaidSheetDue}
               onEdit={(id) => navigate(`/dues/${id}/edit`)}
               onDelete={setDeleteId}
+              onRevert={setRevertId}
             />
           ))}
         </div>
@@ -438,6 +455,17 @@ export const DuesPage = () => {
         isDanger={true}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteId(null)}
+      />
+
+      {/* Revert Confirmation */}
+      <ConfirmDialog 
+        isOpen={revertId !== null}
+        title="Revert Payment"
+        message="Are you sure you want to revert payment(s) for this due record? This will delete the generated transaction(s) and restore the due balance."
+        confirmText="Revert"
+        isDanger={true}
+        onConfirm={handleRevertConfirm}
+        onCancel={() => setRevertId(null)}
       />
     </div>
   )

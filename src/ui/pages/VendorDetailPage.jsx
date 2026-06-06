@@ -43,6 +43,9 @@ export default function VendorDetailPage() {
   // Transaction delete state
   const [deleteTxId, setDeleteTxId] = useState(null)
 
+  // Revert due state
+  const [revertDueId, setRevertDueId] = useState(null)
+
   const loadData = async () => {
     setLoading(true)
     try {
@@ -158,6 +161,18 @@ export default function VendorDetailPage() {
         loadData()
       } catch (err) {
         alert('Failed to delete due: ' + err.message)
+      }
+    }
+  }
+
+  const handleRevertDueConfirm = async () => {
+    if (revertDueId) {
+      try {
+        await DuePaymentService.revertDuePayment(revertDueId)
+        setRevertDueId(null)
+        loadData()
+      } catch (err) {
+        alert('Failed to revert payment: ' + err.message)
       }
     }
   }
@@ -435,6 +450,7 @@ export default function VendorDetailPage() {
                   onMarkPaid={setPaidSheetDue}
                   onEdit={(id) => navigate(`/dues/${id}/edit`)}
                   onDelete={setDeleteDueId}
+                  onRevert={setRevertDueId}
                 />
               ))}
             </div>
@@ -601,6 +617,16 @@ export default function VendorDetailPage() {
         isDanger={true}
         onConfirm={handleDeleteDueConfirm}
         onCancel={() => setDeleteDueId(null)}
+      />
+
+      <ConfirmDialog 
+        isOpen={revertDueId !== null}
+        title="Revert Payment"
+        message="Are you sure you want to revert payment(s) for this due record? This will delete the generated transaction(s) and restore the due balance."
+        confirmText="Revert"
+        isDanger={true}
+        onConfirm={handleRevertDueConfirm}
+        onCancel={() => setRevertDueId(null)}
       />
 
       <ConfirmDialog 

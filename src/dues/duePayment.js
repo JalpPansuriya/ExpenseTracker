@@ -59,12 +59,6 @@ export const DuePaymentService = {
       throw new Error(`Due payment with ID ${id} not found`)
     }
 
-    const today = getTodayStr()
-    const status = computeStatus(existing, today)
-    if (status === 'paid') {
-      throw new Error('Cannot edit a paid due payment')
-    }
-
     const mergedForValidation = {
       ...existing,
       ...input,
@@ -87,6 +81,31 @@ export const DuePaymentService = {
       changes.vendorName = vendor ? vendor.name : ''
     }
 
+    // Propagate changes to the linked expenditure if it exists
+    if (existing.linkedExpenditureId) {
+      const expChanges = {}
+      if (input.amount !== undefined) {
+        expChanges.amount = Math.round(input.amount * 100)
+      }
+      if (input.vendorId) {
+        expChanges.vendorId = input.vendorId
+        const vendor = await StorageService.getById('vendors', input.vendorId)
+        expChanges.vendorName = vendor ? vendor.name : ''
+      }
+      if (input.categoryId) {
+        expChanges.categoryId = input.categoryId
+      }
+      if (input.notes !== undefined) {
+        expChanges.notes = input.notes
+      }
+      if (input.date) {
+        expChanges.date = input.date
+      }
+      if (Object.keys(expChanges).length > 0) {
+        await StorageService.update('expenditures', existing.linkedExpenditureId, expChanges)
+      }
+    }
+
     return await StorageService.update('duePayments', id, changes)
   },
 
@@ -96,13 +115,47 @@ export const DuePaymentService = {
       throw new Error(`Due payment with ID ${id} not found`)
     }
 
-    const today = getTodayStr()
-    const status = computeStatus(existing, today)
-    if (status === 'paid') {
-      throw new Error('Cannot delete a paid due payment')
+    // Soft delete linked expenditures
+    if (existing.linkedExpenditureId) {
+      await StorageService.softDelete('expenditures', existing.linkedExpenditureId)
+    }
+    const expenditures = await StorageService.getAll('expenditures')
+    const linkedExps = expenditures.filter(exp => exp.duePaymentId === id)
+    for (const exp of linkedExps) {
+      await StorageService.softDelete('expenditures', exp.id)
     }
 
     return await StorageService.softDelete('duePayments', id)
+  },
+
+  async revertDuePayment(id) {
+    const existing = await StorageService.getById('duePayments', id)
+    if (!existing) {
+      throw new Error(`Due payment with ID ${id} not found`)
+    }
+
+    // Delete linked expenditures
+    if (existing.linkedExpenditureId) {
+      await StorageService.softDelete('expenditures', existing.linkedExpenditureId)
+    }
+    const expenditures = await StorageService.getAll('expenditures')
+    const linkedExps = expenditures.filter(exp => exp.duePaymentId === id)
+    for (const exp of linkedExps) {
+      await StorageService.softDelete('expenditures', exp.id)
+    }
+
+    // Reset due payment properties
+    const changes = {
+      paidAt: null,
+      linkedExpenditureId: null,
+      isPartial: null
+    }
+    if (existing.originalAmount) {
+      changes.amount = existing.originalAmount
+      changes.originalAmount = null
+    }
+
+    return await StorageService.update('duePayments', id, changes)
   },
 
   async listDuePayments(filters = {}) {

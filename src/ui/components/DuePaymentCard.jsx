@@ -10,7 +10,8 @@ export const DuePaymentCard = ({
   categories = [], 
   onMarkPaid, 
   onEdit, 
-  onDelete 
+  onDelete,
+  onRevert
 }) => {
   const category = categories.find(c => c.id === duePayment.categoryId)
   const displayVendor = duePayment.vendorName || duePayment.vendor
@@ -95,25 +96,35 @@ export const DuePaymentCard = ({
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
         <span>Due: {duePayment.dueDate}</span>
         
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          {duePayment.status !== 'paid' && (
+        <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+          {onEdit && (
+            <button 
+              className="btn btn-secondary btn-sm" 
+              onClick={() => onEdit(duePayment.id)}
+              style={{ padding: '0.25rem 0.6rem' }}
+            >
+              Edit
+            </button>
+          )}
+          {onDelete && (
+            <button 
+              className="btn btn-danger btn-sm" 
+              onClick={() => onDelete(duePayment.id)}
+              style={{ padding: '0.25rem 0.6rem', backgroundColor: '#fdf2f2', color: 'var(--status-overdue)', border: '1px solid #ffccd2' }}
+            >
+              Delete
+            </button>
+          )}
+
+          {duePayment.status !== 'paid' ? (
             <>
-              {onEdit && (
-                <button 
-                  className="btn btn-secondary btn-sm" 
-                  onClick={() => onEdit(duePayment.id)}
-                  style={{ padding: '0.25rem 0.6rem' }}
+              {duePayment.originalAmount && onRevert && (
+                <button
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => onRevert(duePayment.id)}
+                  style={{ padding: '0.25rem 0.6rem', color: 'var(--status-overdue)' }}
                 >
-                  Edit
-                </button>
-              )}
-              {onDelete && (
-                <button 
-                  className="btn btn-danger btn-sm" 
-                  onClick={() => onDelete(duePayment.id)}
-                  style={{ padding: '0.25rem 0.6rem', backgroundColor: '#fdf2f2', color: 'var(--status-overdue)', border: '1px solid #ffccd2' }}
-                >
-                  Delete
+                  ↩ Revert Partials
                 </button>
               )}
               {onMarkPaid && (
@@ -126,11 +137,21 @@ export const DuePaymentCard = ({
                 </button>
               )}
             </>
-          )}
-          {duePayment.status === 'paid' && (
-            <span style={{ color: 'var(--status-paid)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              ✓ Paid on {duePayment.paidAt ? duePayment.paidAt.split('T')[0] : ''}
-            </span>
+          ) : (
+            <>
+              {onRevert && (
+                <button
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => onRevert(duePayment.id)}
+                  style={{ padding: '0.25rem 0.6rem', color: 'var(--status-overdue)' }}
+                >
+                  ↩ Revert Payment
+                </button>
+              )}
+              <span style={{ color: 'var(--status-paid)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.80rem' }}>
+                ✓ Paid {duePayment.paidAt ? duePayment.paidAt.split('T')[0] : ''}
+              </span>
+            </>
           )}
         </div>
       </div>
