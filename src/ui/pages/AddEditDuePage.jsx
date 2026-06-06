@@ -33,9 +33,9 @@ export const AddEditDuePage = () => {
         setCategoryId(cats[0].id)
       }
 
-      // Default due date to 7 days from now
+      // Default due date to 90 days from now
       const defaultDate = new Date()
-      defaultDate.setDate(defaultDate.getDate() + 7)
+      defaultDate.setDate(defaultDate.getDate() + 90)
       setDueDate(defaultDate.toLocaleDateString('en-CA'))
 
       // Load global default lead days
