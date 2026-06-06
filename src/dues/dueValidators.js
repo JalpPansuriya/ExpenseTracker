@@ -71,6 +71,12 @@ export const validateDuePayment = async (input) => {
     }
   }
 
+  // Type
+  const validTypes = ['payable', 'receivable']
+  if (input.type && !validTypes.includes(input.type)) {
+    errors.push({ field: 'type', message: `Type must be one of: ${validTypes.join(', ')}` })
+  }
+
   return {
     valid: errors.length === 0,
     errors

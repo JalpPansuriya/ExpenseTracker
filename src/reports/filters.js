@@ -46,6 +46,12 @@ export const applyDueFilters = (duePayments, filters = {}) => {
     // Soft deleted check
     if (due.deleted) return false
 
+    // Type Filter
+    if (filters.type && filters.type !== 'all') {
+      const dueType = due.type || 'payable'
+      if (dueType !== filters.type) return false
+    }
+
     // Category Filter
     if (filters.categoryIds && filters.categoryIds.length > 0) {
       if (!filters.categoryIds.includes(due.categoryId)) return false

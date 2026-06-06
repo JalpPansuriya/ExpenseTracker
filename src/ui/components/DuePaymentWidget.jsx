@@ -22,22 +22,50 @@ export const DuePaymentWidget = ({ summary }) => {
           <span style={{ fontWeight: '600', fontSize: '0.9rem' }}>All caught up! No pending dues.</span>
         </div>
       ) : (
-        <div className="summary-widget-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-          <div className="summary-card overdue" style={{ cursor: 'pointer' }}>
-            <Link to="/dues" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase' }}>🔴 Overdue</span>
-              <div style={{ fontSize: '1.5rem', fontWeight: '800', margin: '0.25rem 0' }}>{overdueCount}</div>
-              <AmountDisplay amount={overdueTotal} className="bold" />
-            </Link>
-          </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {summary.payable && (summary.payable.overdueCount > 0 || summary.payable.dueSoonCount > 0) && (
+            <div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>OUTCOMING (TO PAY)</div>
+              <div className="summary-widget-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                <div className="summary-card overdue" style={{ cursor: 'pointer' }}>
+                  <Link to="/dues" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase' }}>🔴 Overdue</span>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '800', margin: '0.25rem 0' }}>{summary.payable.overdueCount}</div>
+                    <AmountDisplay amount={summary.payable.overdueTotal} className="bold" />
+                  </Link>
+                </div>
+                <div className="summary-card due-soon" style={{ cursor: 'pointer' }}>
+                  <Link to="/dues" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase' }}>🟡 Due Soon</span>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '800', margin: '0.25rem 0' }}>{summary.payable.dueSoonCount}</div>
+                    <AmountDisplay amount={summary.payable.dueSoonTotal} className="bold" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
 
-          <div className="summary-card due-soon" style={{ cursor: 'pointer' }}>
-            <Link to="/dues" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase' }}>🟡 Due Soon</span>
-              <div style={{ fontSize: '1.5rem', fontWeight: '800', margin: '0.25rem 0' }}>{dueSoonCount}</div>
-              <AmountDisplay amount={dueSoonTotal} className="bold" />
-            </Link>
-          </div>
+          {summary.receivable && (summary.receivable.overdueCount > 0 || summary.receivable.dueSoonCount > 0) && (
+            <div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>INCOMING (TO RECEIVE)</div>
+              <div className="summary-widget-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                <div className="summary-card overdue" style={{ cursor: 'pointer', backgroundColor: 'var(--color-income-bg)', border: '1px solid #cce8e0' }}>
+                  <Link to="/dues" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--color-income)' }}>🟢 Overdue</span>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '800', margin: '0.25rem 0', color: 'var(--color-income)' }}>{summary.receivable.overdueCount}</div>
+                    <AmountDisplay amount={summary.receivable.overdueTotal} className="bold" style={{ color: 'var(--color-income)' }} />
+                  </Link>
+                </div>
+                <div className="summary-card due-soon" style={{ cursor: 'pointer', backgroundColor: '#f0f4fa', border: '1px solid #dce4f0' }}>
+                  <Link to="/dues" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--primary)' }}>🔵 Due Soon</span>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '800', margin: '0.25rem 0', color: 'var(--primary)' }}>{summary.receivable.dueSoonCount}</div>
+                    <AmountDisplay amount={summary.receivable.dueSoonTotal} className="bold" style={{ color: 'var(--primary)' }} />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

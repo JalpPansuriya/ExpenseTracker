@@ -22,7 +22,17 @@ export const DuePaymentCard = ({
     }` }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', marginBottom: '0.75rem' }}>
         <div>
-          <h4 style={{ fontSize: '1.05rem', fontWeight: '700', marginBottom: '0.25rem' }}>
+          <h4 style={{ fontSize: '1.05rem', fontWeight: '700', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span className="badge" style={{
+              backgroundColor: duePayment.type === 'receivable' ? 'var(--color-income-bg)' : 'var(--color-expense-bg)',
+              color: duePayment.type === 'receivable' ? 'var(--color-income)' : 'var(--color-expense)',
+              fontSize: '0.65rem',
+              padding: '0.1rem 0.3rem',
+              borderRadius: '2px',
+              fontWeight: '800'
+            }}>
+              {duePayment.type === 'receivable' ? 'IN' : 'OUT'}
+            </span>
             {duePayment.title}
           </h4>
           <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>

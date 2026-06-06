@@ -27,6 +27,7 @@ export const DuePaymentService = {
     const enrichedInput = {
       priority: 'medium',
       reminderLeadDays: defaultLeadDays,
+      type: input.type || 'payable',
       ...input
     }
 
@@ -154,7 +155,8 @@ export const DuePaymentService = {
       paymentMethod: expenditureOverrides.paymentMethod || due.paymentMethod || 'cash',
       notes: expenditureOverrides.notes !== undefined ? expenditureOverrides.notes : due.notes,
       receiptId: expenditureOverrides.receiptId || null,
-      duePaymentId: due.id
+      duePaymentId: due.id,
+      type: due.type === 'receivable' ? 'income' : 'expense'
     }
 
     const validation = await validateExpenditure(rawExpenditureInputForValidation)
@@ -198,17 +200,17 @@ export const DuePaymentService = {
     const all = await StorageService.getAll('duePayments')
     const active = all.filter(d => !d.deleted && !d.paidAt)
 
-    let overdueCount = 0, overdueTotal = 0
-    let dueSoonCount = 0, dueSoonTotal = 0
-    let upcomingCount = 0
+    let payable = { overdueCount: 0, overdueTotal: 0, dueSoonCount: 0, dueSoonTotal: 0, upcomingCount: 0 }
+    let receivable = { overdueCount: 0, overdueTotal: 0, dueSoonCount: 0, dueSoonTotal: 0, upcomingCount: 0 }
 
     for (const due of active) {
       const status = computeStatus(due, today)
-      if (status === 'overdue') { overdueCount++; overdueTotal += due.amount }
-      else if (status === 'due_soon') { dueSoonCount++; dueSoonTotal += due.amount }
-      else if (status === 'upcoming') { upcomingCount++ }
+      const target = due.type === 'receivable' ? receivable : payable
+      if (status === 'overdue') { target.overdueCount++; target.overdueTotal += due.amount }
+      else if (status === 'due_soon') { target.dueSoonCount++; target.dueSoonTotal += due.amount }
+      else if (status === 'upcoming') { target.upcomingCount++ }
     }
 
-    return { overdueCount, overdueTotal, dueSoonCount, dueSoonTotal, upcomingCount }
+    return { payable, receivable }
   }
 }

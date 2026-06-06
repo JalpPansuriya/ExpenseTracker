@@ -21,7 +21,7 @@ export const DashboardPage = () => {
       console.log('DEBUG BUTTON CLICKED!')
       console.log('DuePaymentService.getDueSummary() returns:', summary)
       console.log("StorageService.getAll('duePayments') returns:", allDues)
-      alert(`Debug logged. Dues count in DB: ${allDues.length}. Summary overdue: ${summary.overdueCount}, due soon: ${summary.dueSoonCount}, upcoming: ${summary.upcomingCount}`)
+      alert(`Debug logged. Dues count in DB: ${allDues.length}. Summary payable overdue: ${summary.payable.overdueCount}, receivable overdue: ${summary.receivable.overdueCount}`)
     } catch (err) {
       console.error('Debug click failed:', err)
       alert('Debug click failed: ' + err.message)
@@ -29,11 +29,8 @@ export const DashboardPage = () => {
   }
 
   const [dueSummary, setDueSummary] = useState({
-    overdueCount: 0,
-    overdueTotal: 0,
-    dueSoonCount: 0,
-    dueSoonTotal: 0,
-    upcomingCount: 0
+    payable: { overdueCount: 0, overdueTotal: 0, dueSoonCount: 0, dueSoonTotal: 0, upcomingCount: 0 },
+    receivable: { overdueCount: 0, overdueTotal: 0, dueSoonCount: 0, dueSoonTotal: 0, upcomingCount: 0 }
   })
   
   useEffect(() => {
@@ -62,9 +59,10 @@ export const DashboardPage = () => {
   const spendByCategory = getSpendByCategory(expenditures, categories)
   const recentExpenses = expenditures.slice(0, 5)
 
-  const hasPendingDues = Number(dueSummary.overdueCount || 0) > 0 || 
-                         Number(dueSummary.dueSoonCount || 0) > 0 || 
-                         Number(dueSummary.upcomingCount || 0) > 0
+  const p = dueSummary.payable || {}
+  const r = dueSummary.receivable || {}
+  const hasPendingDues = Number(p.overdueCount || 0) > 0 || Number(p.dueSoonCount || 0) > 0 || Number(p.upcomingCount || 0) > 0 || 
+                         Number(r.overdueCount || 0) > 0 || Number(r.dueSoonCount || 0) > 0 || Number(r.upcomingCount || 0) > 0
 
   // Custom SVG Donut Chart Renderer (Beautiful & Clean)
   const renderCategoryDonut = () => {

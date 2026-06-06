@@ -41,3 +41,24 @@
  * @property {'income' | 'expense' | 'all'} [type] - Filter by income, expense, or all (default: 'all')
  * @property {string} [vendorId] - Filter by specific Vendor ID
  */
+
+/**
+ * @typedef {Object} DuePayment
+ * @property {string} id - Unique identifier
+ * @property {string} title - Description
+ * @property {number} amount - Stored in paise
+ * @property {number} [originalAmount] - Stored in paise
+ * @property {string} categoryId - Reference to Category ID
+ * @property {string} vendorId - Reference to Vendor ID
+ * @property {string} vendorName - Denormalized vendor name
+ * @property {string} dueDate - YYYY-MM-DD
+ * @property {string} priority - 'low' | 'medium' | 'high'
+ * @property {number} reminderLeadDays - Days before due date to remind
+ * @property {string} [notes] - Additional details
+ * @property {'payable' | 'receivable'} type - Direction of due payment
+ * @property {string} [paidAt] - ISO timestamp when paid
+ * @property {string} [linkedExpenditureId] - ID of generated expenditure
+ * @property {string} createdAt - ISO timestamp
+ * @property {string} updatedAt - ISO timestamp
+ * @property {boolean} deleted - Soft deletion flag
+ */

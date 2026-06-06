@@ -11,6 +11,7 @@ export const AddEditDuePage = () => {
   const isEdit = !!id
 
   const [title, setTitle] = useState('')
+  const [type, setType] = useState('payable')
   const [vendorId, setVendorId] = useState('')
   const [amount, setAmount] = useState('')
   const [dueDate, setDueDate] = useState('')
@@ -51,6 +52,7 @@ export const AddEditDuePage = () => {
             return
           }
           setTitle(due.title)
+          setType(due.type || 'payable')
           setVendorId(due.vendorId || '')
           setAmount((due.amount / 100).toString()) // convert paise to float
           setDueDate(due.dueDate)
@@ -73,6 +75,7 @@ export const AddEditDuePage = () => {
 
     const payload = {
       title,
+      type,
       vendorId,
       amount: amount ? Number(amount) : '', // float format
       dueDate,
@@ -140,12 +143,38 @@ export const AddEditDuePage = () => {
             {errors.title && <div className="form-error">{errors.title}</div>}
           </div>
 
+          <div className="form-group" style={{ display: 'flex', gap: '1.5rem', margin: '1.5rem 0', padding: '1rem', backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: '600' }}>
+              <input 
+                type="radio" 
+                name="type" 
+                value="payable" 
+                checked={type === 'payable'} 
+                onChange={() => setType('payable')} 
+                disabled={formError.includes('paid')}
+              />
+              🔴 Outcoming (To Pay)
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: '600' }}>
+              <input 
+                type="radio" 
+                name="type" 
+                value="receivable" 
+                checked={type === 'receivable'} 
+                onChange={() => setType('receivable')} 
+                disabled={formError.includes('paid')}
+              />
+              🟢 Incoming (To Receive)
+            </label>
+          </div>
+          {errors.type && <div className="form-error">{errors.type}</div>}
+
           <div className="form-group">
             <label className="form-label">Vendor</label>
             <VendorDropdown
               value={vendorId}
               onChange={setVendorId}
-              transactionType="expense"
+              transactionType={type === 'receivable' ? 'income' : 'expense'}
             />
             {errors.vendorId && <div className="form-error">{errors.vendorId}</div>}
           </div>

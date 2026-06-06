@@ -21,6 +21,7 @@ export const DuesPage = () => {
   
   // Filtering & Search
   const [searchQuery, setSearchQuery] = useState('')
+  const [filterType, setFilterType] = useState('all') // 'all' | 'payable' | 'receivable'
   const [selectedCategories, setSelectedCategories] = useState([])
   const [selectedPriorities, setSelectedPriorities] = useState([])
   const [selectedStatuses, setSelectedStatuses] = useState([])
@@ -99,6 +100,7 @@ export const DuesPage = () => {
 
   // Advanced Filters
   const filters = {
+    type: filterType,
     categoryIds: selectedCategories,
     priorities: selectedPriorities,
     statuses: selectedStatuses,
@@ -190,12 +192,19 @@ export const DuesPage = () => {
   }
 
   // Totals calculations
-  const totalAmount = finalDues.reduce((sum, item) => sum + item.amount, 0)
+  const totalPayable = finalDues.filter(d => d.type !== 'receivable').reduce((sum, item) => sum + item.amount, 0)
+  const totalReceivable = finalDues.filter(d => d.type === 'receivable').reduce((sum, item) => sum + item.amount, 0)
 
   return (
     <div className="app-container">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <h2 style={{ fontFamily: 'var(--font-family-heading)', fontWeight: '800' }}>Due Payments 📅</h2>
+        <div>
+          <h2 style={{ fontFamily: 'var(--font-family-heading)', fontWeight: '800' }}>Due Payments 📅</h2>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', fontSize: '0.9rem' }}>
+            <span style={{ color: 'var(--color-expense)', fontWeight: '600' }}>Total Payable: <AmountDisplay amount={totalPayable} /></span>
+            <span style={{ color: 'var(--color-income)', fontWeight: '600' }}>Total Receivable: <AmountDisplay amount={totalReceivable} /></span>
+          </div>
+        </div>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button className="btn btn-secondary btn-sm" onClick={handleExport} disabled={finalDues.length === 0}>
             📤 Export CSV
@@ -262,6 +271,22 @@ export const DuesPage = () => {
                 <div style={{ flex: 1, minWidth: '140px' }}>
                   <label className="form-label" style={{ fontSize: '0.75rem' }}>To Due Date</label>
                   <input type="date" className="form-control" value={dateTo} onChange={e => setDateTo(e.target.value)} />
+                </div>
+              </div>
+
+              {/* Type Filter */}
+              <div>
+                <label className="form-label" style={{ fontSize: '0.75rem' }}>Type</label>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.85rem' }}>
+                    <input type="radio" name="filterType" value="all" checked={filterType === 'all'} onChange={() => setFilterType('all')} /> All
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.85rem' }}>
+                    <input type="radio" name="filterType" value="payable" checked={filterType === 'payable'} onChange={() => setFilterType('payable')} /> Outcoming (Payable)
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.85rem' }}>
+                    <input type="radio" name="filterType" value="receivable" checked={filterType === 'receivable'} onChange={() => setFilterType('receivable')} /> Incoming (Receivable)
+                  </label>
                 </div>
               </div>
 
