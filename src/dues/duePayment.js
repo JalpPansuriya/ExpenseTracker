@@ -169,9 +169,16 @@ export const DuePaymentService = {
       amount // store in paise
     }
 
-    const duePaymentChanges = {
-      paidAt: new Date().toISOString(),
-      linkedExpenditureId: null // will be injected by atomic transaction
+    const isPartialPayment = amount < due.amount
+
+    const duePaymentChanges = {}
+    
+    if (isPartialPayment) {
+      duePaymentChanges.amount = due.amount - amount
+      duePaymentChanges.isPartial = true
+    } else {
+      duePaymentChanges.paidAt = new Date().toISOString()
+      duePaymentChanges.linkedExpenditureId = null // will be injected by atomic transaction
     }
 
     // 3. Call single atomic IndexedDB transaction in storage

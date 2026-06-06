@@ -57,7 +57,7 @@ export const MarkAsPaidSheet = ({ isOpen, duePayment, categories = [], onConfirm
         </div>
 
         <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-          Review and finalize details to log this due payment as an expenditure.
+          Review and finalize details. Entering a partial amount will reduce the due balance.
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -135,7 +135,7 @@ export const MarkAsPaidSheet = ({ isOpen, duePayment, categories = [], onConfirm
               Cancel
             </button>
             <button type="submit" className="btn btn-primary" style={{ flex: 2 }}>
-              Log Expenditure
+              {Number(amount) < (duePayment.amount / 100) ? 'Log Partial Payment' : 'Log Full Payment'}
             </button>
           </div>
         </form>

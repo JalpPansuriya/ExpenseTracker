@@ -285,12 +285,19 @@ export const StorageService = {
         throw new Error(`Due payment with ID ${duePaymentId} not found`)
       }
 
+      const isPartial = duePaymentChanges.isPartial
+      const changesToApply = { ...duePaymentChanges }
+      delete changesToApply.isPartial
+
       const updatedDuePayment = {
         ...existingDue,
-        ...duePaymentChanges,
-        linkedExpenditureId: newExpenditure.id,
-        paidAt: new Date().toISOString(),
+        ...changesToApply,
         updatedAt: new Date().toISOString()
+      }
+
+      if (!isPartial) {
+        updatedDuePayment.linkedExpenditureId = newExpenditure.id
+        updatedDuePayment.paidAt = new Date().toISOString()
       }
 
       await tx.objectStore('expenditures').add(newExpenditure)
