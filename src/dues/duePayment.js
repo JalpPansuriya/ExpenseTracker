@@ -175,6 +175,7 @@ export const DuePaymentService = {
     
     if (isPartialPayment) {
       duePaymentChanges.amount = due.amount - amount
+      duePaymentChanges.originalAmount = due.originalAmount || due.amount
       duePaymentChanges.isPartial = true
     } else {
       duePaymentChanges.paidAt = new Date().toISOString()

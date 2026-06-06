@@ -30,7 +30,17 @@ export const DuePaymentCard = ({
           </span>
         </div>
         <div style={{ textAlign: 'right' }}>
+          {duePayment.originalAmount && (
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textDecoration: 'line-through', marginBottom: '0.1rem' }}>
+              <AmountDisplay amount={duePayment.originalAmount} />
+            </div>
+          )}
           <AmountDisplay amount={duePayment.amount} className="bold" style={{ fontSize: '1.1rem' }} />
+          {duePayment.originalAmount && (
+            <div style={{ fontSize: '0.75rem', color: 'var(--status-paid)', marginTop: '0.2rem', fontWeight: '600' }}>
+              Partially Paid
+            </div>
+          )}
         </div>
       </div>
 
